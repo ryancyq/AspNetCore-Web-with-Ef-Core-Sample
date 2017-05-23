@@ -22,6 +22,14 @@ namespace ContosoUniversity.Controllers
         // GET: Courses
         public async Task<IActionResult> Index()
         {
+            var coursesWithReadOnly = _context.Courses
+                .Where(c => c.CourseAssignments.Any(ca => ca.Permissions.HasFlag(StaticPermission.READ_ONLY)))
+                .ToList();
+
+            var coursesWithReadWrite = _context.Courses
+                .Where(c => c.CourseAssignments.Any(ca => ca.Permissions.HasFlag(StaticPermissionExtensions.FULL_ACCESS_ALL)))
+                .ToList();
+
             var courses = _context.Courses
                 .Include(c => c.Department)
                 .AsNoTracking();
